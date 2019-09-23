@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "align.hpp"
-#include "match_cost.hpp"
+#include "match_score.hpp"
 
 namespace compho {
 /**
@@ -16,7 +16,7 @@ class SingleScalePairAlignAlgorithm : public PairwiseAlignAlgorithm {
      *                        Each element should be positive values.
      */
     SingleScalePairAlignAlgorithm(cv::Vec2i pert,
-                                  std::shared_ptr<MatchingCost> cost);
+                                  std::shared_ptr<MatchingScore> score);
 
     /**
      * Get a translation vector for moving image
@@ -24,10 +24,11 @@ class SingleScalePairAlignAlgorithm : public PairwiseAlignAlgorithm {
      * @param fixed             fixed reference image.
      * @param moving            moving image.
      */
-    cv::Vec2i align_pair(const cv::Mat &fixed, const cv::Mat &moving) override;
+    cv::Vec2i align_pair(const cv::Mat1f &fixed,
+                         const cv::Mat1f &moving) override;
 
   private:
     cv::Vec2i m_pert;
-    std::shared_ptr<MatchingCost> m_cost;
+    std::shared_ptr<MatchingScore> m_score;
 };
 } // namespace compho

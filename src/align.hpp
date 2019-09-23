@@ -19,7 +19,7 @@ class AlignAlgorithm {
      * @return                      list of translation vectors for each image
      */
     virtual std::vector<cv::Vec2i>
-    align(const std::vector<cv::Mat> &images) = 0;
+    align(const std::vector<cv::Mat1f> &images) = 0;
 };
 
 /**
@@ -27,9 +27,9 @@ class AlignAlgorithm {
  */
 class PairwiseAlignAlgorithm : public AlignAlgorithm {
   public:
-    std::vector<cv::Vec2i> align(const std::vector<cv::Mat> &images) override;
+    std::vector<cv::Vec2i> align(const std::vector<cv::Mat1f> &images) override;
 
-    virtual cv::Vec2i align_pair(const cv::Mat &fixed,
-                                 const cv::Mat &moving) = 0;
+    virtual cv::Vec2i align_pair(const cv::Mat1f &fixed,
+                                 const cv::Mat1f &moving) = 0;
 };
 } // namespace compho

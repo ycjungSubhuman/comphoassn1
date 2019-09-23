@@ -5,7 +5,7 @@
 
 namespace compho {
 std::vector<cv::Vec2i>
-PairwiseAlignAlgorithm::align(const std::vector<cv::Mat> &images) {
+PairwiseAlignAlgorithm::align(const std::vector<cv::Mat1f> &images) {
     assert(images.size() >= 2);
 
     std::vector<cv::Vec2i> result;
