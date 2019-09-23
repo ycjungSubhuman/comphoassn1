@@ -1,11 +1,18 @@
 project(comphoassn1)
 cmake_minimum_required(VERSION 3.15)
 
-find_package(OpenCV 4.1.1 REQUIRED COMPONENTS core)
+find_package(OpenCV 4.1.1 REQUIRED COMPONENTS core imgcodecs)
+
+add_library(comphoassn1
+    src/align.cpp
+    src/match_cost.cpp
+    src/multi_scale.cpp
+    src/pyramid.cpp
+    src/single_scale.cpp
+    src/util.cpp)
+target_link_libraries(comphoassn1 PUBLIC ${OpenCV_LIBS})
+target_include_directories(comphoassn1 PUBLIC ${OpenCV_INCLUDE_DIRS})
 
 add_executable(main.out src/main.cpp)
-target_include_directories(main.out PRIVATE
-    ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(main.out PRIVATE
-    ${OpenCV_LIBS})
+target_link_libraries(main.out PRIVATE comphoassn1)
 
