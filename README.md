@@ -1,4 +1,4 @@
-#Computational Photography Assignment 1
+# Simle image matching
 
 This project builds two targets
 
