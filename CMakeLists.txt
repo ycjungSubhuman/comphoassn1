@@ -13,8 +13,9 @@ add_library(comphoassn1
     src/util.cpp)
 target_link_libraries(comphoassn1 PUBLIC ${OpenCV_LIBS} OpenMP::OpenMP_CXX)
 target_include_directories(comphoassn1 PUBLIC ${OpenCV_INCLUDE_DIRS})
-target_compile_options(comphoassn1 PUBLIC -Wall)
+target_compile_options(comphoassn1 PRIVATE -Wall)
 
 add_executable(main.out src/main.cpp)
 target_link_libraries(main.out PRIVATE comphoassn1)
+target_compile_options(main.out PRIVATE -Wall)
 
