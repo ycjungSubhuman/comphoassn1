@@ -1,4 +1,4 @@
-# Simle image matching
+# Simple image matching
 
 This project builds two targets
 
