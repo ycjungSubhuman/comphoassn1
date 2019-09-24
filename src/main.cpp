@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -12,6 +13,7 @@
 #include "util.hpp"
 
 using namespace compho;
+namespace chr = std::chrono;
 
 struct AppConfig {
     std::string alg_mode;
@@ -116,7 +118,14 @@ void single_mode(const AppConfig &config) {
 
     std::vector<cv::Mat1f> images = get_images(config);
     std::vector<cv::Mat1f> images_cropped = crop_images(images, config.padding);
+
+    chr::system_clock clock;
+    chr::system_clock::time_point start = clock.now();
     std::vector<cv::Vec2i> results = alg->align(images_cropped);
+    chr::system_clock::time_point end = clock.now();
+    chr::duration<double, std::milli> dur = end - start;
+    std::cout << "Time took optimizing: " << dur.count() << " ms" << std::endl;
+
     write_results(config, images, results);
 }
 
