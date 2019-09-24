@@ -9,6 +9,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "match_score.hpp"
+#include "multi_scale.hpp"
 #include "single_scale.hpp"
 #include "util.hpp"
 
@@ -54,7 +55,7 @@ AppConfig parse_config(int argc, char **argv) {
     AppConfig result;
     result.alg_mode = std::string(argv[1]);
 
-    if (result.alg_mode == "single") {
+    if (result.alg_mode == "single" || result.alg_mode == "multi") {
         if (argc != 8) {
             std::cerr << "Put 7 arguments. --help for usage." << std::endl;
             exit(1);
@@ -67,7 +68,6 @@ AppConfig parse_config(int argc, char **argv) {
         result.img_path = std::string(argv[6]);
         result.out_name = std::string(argv[7]);
 
-    } else if (result.alg_mode == "multi") {
     } else if (result.alg_mode == "recon") {
         if (argc != 5) {
             std::cerr << "Put 4 arguments. --help for usage." << std::endl;
@@ -101,7 +101,7 @@ void write_results(const AppConfig &config,
                        std::vector<cv::Vec2i>(images.size(), cv::Vec2i(0, 0)));
 }
 
-void single_mode(const AppConfig &config) {
+void run_optim_mode(const AppConfig &config) {
     cv::Vec2i pert(config.pert_x, config.pert_y);
 
     std::unordered_map<std::string, std::shared_ptr<MatchingScore>> map_cost = {
@@ -112,7 +112,9 @@ void single_mode(const AppConfig &config) {
     std::unordered_map<std::string, std::shared_ptr<AlignAlgorithm>>
         map_alg_mode = {
             {"single", std::make_shared<SingleScalePairAlignAlgorithm>(
-                           pert, map_cost[config.cost])}};
+                           pert, map_cost[config.cost])},
+            {"multi", std::make_shared<MultiScalePairAlignAlgorithm>(
+                          pert, map_cost[config.cost])}};
 
     std::shared_ptr<AlignAlgorithm> alg = map_alg_mode[config.alg_mode];
 
@@ -129,7 +131,7 @@ void single_mode(const AppConfig &config) {
     write_results(config, images, results);
 }
 
-void recon_mode(const AppConfig &config) {
+void run_recon_mode(const AppConfig &config) {
     std::vector<cv::Mat1f> images = get_images(config);
     std::vector<cv::Vec2i> results;
     read_displacement_file(config.vec_path, results);
@@ -140,9 +142,9 @@ int main(int argc, char **argv) {
     AppConfig config = parse_config(argc, argv);
 
     if (config.alg_mode == "recon") {
-        recon_mode(config);
+        run_recon_mode(config);
     } else {
-        single_mode(config);
+        run_optim_mode(config);
     }
 
     return 0;

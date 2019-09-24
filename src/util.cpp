@@ -28,16 +28,34 @@ std::vector<cv::Mat1f> split_single_column_image(const cv::Mat1f &img) {
     return std::vector<cv::Mat1f>{B, G, R};
 }
 
+cv::Mat1f crop_image(const cv::Mat1f &img, int padding) {
+    int c = padding;
+    return img(cv::Rect(c, c, img.cols - 2 * c, img.rows - 2 * c));
+}
+
 std::vector<cv::Mat1f> crop_images(const std::vector<cv::Mat1f> &imgs,
                                    int padding) {
     std::vector<cv::Mat1f> result;
 
-    const int c = padding;
     for (size_t i = 0; i < imgs.size(); i++) {
-        result.push_back(imgs[i](
-            cv::Rect(c, c, imgs[i].cols - 2 * c, imgs[i].rows - 2 * c)));
+        result.push_back(crop_image(imgs[i], padding));
     }
     return result;
+}
+
+void overlap_translated(int delta_x, int delta_y, const cv::Mat1f &fixed,
+                        const cv::Mat1f &moving, cv::Mat1f &fixed_overlapped,
+                        cv::Mat1f &moving_overlapped) {
+    cv::Rect rect_fixed(0, 0, fixed.size().width, fixed.size().height);
+    cv::Rect rect_moved(delta_x, delta_y, fixed.size().width,
+                        fixed.size().height);
+    cv::Rect rect_neg_moved(-delta_x, -delta_y, fixed.size().width,
+                            fixed.size().height);
+    cv::Rect rect_fixed_intersection = rect_fixed & rect_moved;
+    cv::Rect rect_moving_intersection = rect_fixed & rect_neg_moved;
+
+    fixed_overlapped = fixed(rect_fixed_intersection);
+    moving_overlapped = moving(rect_moving_intersection);
 }
 
 void write_displacement_file(const std::string &filename,

@@ -12,23 +12,25 @@ namespace compho {
 class SingleScalePairAlignAlgorithm : public PairwiseAlignAlgorithm {
   public:
     /**
-     * @param pert            pertervation size in pixel units.
-     *                        Each element should be positive values.
+     * @param pert            pertervation radius in pixel units.
+     *                        each element should be positive values.
+     *
+     * @param fn_score        matching score calculator object
      */
     SingleScalePairAlignAlgorithm(cv::Vec2i pert,
-                                  std::shared_ptr<MatchingScore> score);
+                                  std::shared_ptr<MatchingScore> fn_score,
+                                  cv::Vec2i offset = cv::Vec2i(0, 0));
 
     /**
-     * Get a translation vector for moving image
-     *
-     * @param fixed             fixed reference image.
-     * @param moving            moving image.
+     * The result from this function does not have offset in it.
+     * Add offset to the result to get absolute displacement value.
      */
     cv::Vec2i align_pair(const cv::Mat1f &fixed,
                          const cv::Mat1f &moving) override;
 
   private:
     cv::Vec2i m_pert;
-    std::shared_ptr<MatchingScore> m_score;
+    std::shared_ptr<MatchingScore> m_fn_score;
+    cv::Vec2i m_offset;
 };
 } // namespace compho

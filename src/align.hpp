@@ -29,6 +29,12 @@ class PairwiseAlignAlgorithm : public AlignAlgorithm {
   public:
     std::vector<cv::Vec2i> align(const std::vector<cv::Mat1f> &images) override;
 
+    /**
+     * Get a translation vector for moving image
+     *
+     * @param fixed             fixed reference image.
+     * @param moving            moving image.
+     */
     virtual cv::Vec2i align_pair(const cv::Mat1f &fixed,
                                  const cv::Mat1f &moving) = 0;
 };
