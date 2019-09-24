@@ -125,8 +125,10 @@ void run_optim_mode(const AppConfig &config) {
     chr::system_clock::time_point start = clock.now();
     std::vector<cv::Vec2i> results = alg->align(images_cropped);
     chr::system_clock::time_point end = clock.now();
-    chr::duration<double, std::milli> dur = end - start;
-    std::cout << "Time took optimizing: " << dur.count() << " ms" << std::endl;
+    chr::milliseconds milli =
+        chr::duration_cast<chr::milliseconds>(end - start);
+    std::cout << "Time took optimizing: " << milli.count() << " ms"
+              << std::endl;
 
     write_results(config, images, results);
 }

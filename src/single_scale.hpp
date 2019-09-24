@@ -12,7 +12,7 @@ namespace compho {
 class SingleScalePairAlignAlgorithm : public PairwiseAlignAlgorithm {
   public:
     /**
-     * @param pert            pertervation radius in pixel units.
+     * @param pert            perturvation radius in pixel units.
      *                        each element should be positive values.
      *
      * @param fn_score        matching score calculator object
