@@ -23,31 +23,30 @@ cv::Vec2i SingleScalePairAlignAlgorithm::align_pair(const cv::Mat1f &fixed,
 
     std::vector<std::pair<double, cv::Vec2i>> score_disp;
 
-    auto get_score = [this, &fixed, &moving](int delta_x,
-                                             int delta_y) -> double {
+    std::mutex mutex_score_disp;
+    const int tot_cnt = (2 * m_pert[0] + 1) * (2 * m_pert[1] + 1);
+    int cnt;
+    cnt = 0;
+    auto calc_score = [this, &fixed, &moving, &score_disp, &mutex_score_disp,
+                       &cnt, tot_cnt](int delta_x, int delta_y) -> void {
         cv::Mat1f fixed_overlapped;
         cv::Mat1f moving_overlapped;
         overlap_translated(delta_x + m_offset[0], delta_y + m_offset[1], fixed,
                            moving, fixed_overlapped, moving_overlapped);
 
-        return (*this->m_fn_score)(fixed_overlapped, moving_overlapped);
-    };
+        double score = (*this->m_fn_score)(fixed_overlapped, moving_overlapped);
 
-    const int tot_cnt = (2 * m_pert[0] + 1) * (2 * m_pert[1] + 1);
-    int cnt;
-    std::mutex mutex_score_disp;
-    cnt = 0;
+        mutex_score_disp.lock();
+        score_disp.emplace_back(score, cv::Vec2i(delta_x, delta_y));
+        cnt++;
+        std::cout << "Tried " << cnt << " out of " << tot_cnt << std::endl;
+        mutex_score_disp.unlock();
+    };
 
 #pragma omp parallel for
     for (int delta_x = -m_pert[0]; delta_x <= m_pert[0]; delta_x++) {
         for (int delta_y = -m_pert[1]; delta_y <= m_pert[1]; delta_y++) {
-            double score = get_score(delta_x, delta_y);
-
-            mutex_score_disp.lock();
-            score_disp.emplace_back(score, cv::Vec2i(delta_x, delta_y));
-            cnt++;
-            std::cout << "Tried " << cnt << " out of " << tot_cnt << std::endl;
-            mutex_score_disp.unlock();
+            calc_score(delta_x, delta_y);
         }
     }
 
