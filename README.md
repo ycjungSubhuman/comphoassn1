@@ -22,6 +22,8 @@ cmake ../ && make
 
 Run `build/main.out --help` for usage
 
+See `run.bash` for execution example
+
 ```
 Usage: <exe name> <alg_mode: ('single' | 'multi' | 'recon')>
 
