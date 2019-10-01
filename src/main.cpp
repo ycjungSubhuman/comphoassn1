@@ -17,11 +17,14 @@ using namespace compho;
 namespace chr = std::chrono;
 
 struct AppConfig {
+    AppConfig() : level_multi(4) {}
+
     std::string alg_mode;
     std::string cost;
     float pert_x;
     float pert_y;
     int padding;
+    size_t level_multi;
     std::string img_path;
     std::string vec_path;
     std::string out_name;
@@ -40,7 +43,8 @@ AppConfig parse_config(int argc, char **argv) {
                       << std::endl;
             std::cout << "<exe name> multi <cost: ('sos' | 'ncc' | 'zncc')> "
                          "<pert_x: float> "
-                         "<pert_y: float> <padding: int> <img_path> <out_name>"
+                         "<pert_y: float> <padding: int> <level_multi: int> "
+                         "<img_path> <out_name>"
                       << std::endl;
             std::cout << "<exe name> recon <img_path> <vec_path> <out_name>"
                       << std::endl;
@@ -55,7 +59,7 @@ AppConfig parse_config(int argc, char **argv) {
     AppConfig result;
     result.alg_mode = std::string(argv[1]);
 
-    if (result.alg_mode == "single" || result.alg_mode == "multi") {
+    if (result.alg_mode == "single") {
         if (argc != 8) {
             std::cerr << "Put 7 arguments. --help for usage." << std::endl;
             exit(1);
@@ -68,6 +72,19 @@ AppConfig parse_config(int argc, char **argv) {
         result.img_path = std::string(argv[6]);
         result.out_name = std::string(argv[7]);
 
+    } else if (result.alg_mode == "multi") {
+        if (argc != 9) {
+            std::cerr << "Put 8 arguments. --help for usage." << std::endl;
+            exit(1);
+        }
+
+        result.cost = std::string(argv[2]);
+        result.pert_x = std::stof(std::string(argv[3]));
+        result.pert_y = std::stof(std::string(argv[4]));
+        result.padding = std::stoi(std::string(argv[5]));
+        result.level_multi = std::stoi(std::string(argv[6]));
+        result.img_path = std::string(argv[7]);
+        result.out_name = std::string(argv[8]);
     } else if (result.alg_mode == "recon") {
         if (argc != 5) {
             std::cerr << "Put 4 arguments. --help for usage." << std::endl;
@@ -114,7 +131,7 @@ void run_optim_mode(const AppConfig &config) {
             {"single", std::make_shared<SingleScalePairAlignAlgorithm>(
                            pert, map_cost[config.cost])},
             {"multi", std::make_shared<MultiScalePairAlignAlgorithm>(
-                          pert, map_cost[config.cost])}};
+                          pert, map_cost[config.cost], config.level_multi)}};
 
     std::shared_ptr<AlignAlgorithm> alg = map_alg_mode[config.alg_mode];
 

@@ -16,9 +16,9 @@ function run() {
 
     mkdir -p examples
 
-    echo "running $alg $fn_score $radius $radius $crop $path_img $path_out ..."
+    echo "running $alg $fn_score $radius $radius $crop $level $path_img $path_out ..."
 
-    ./build/main.out $alg $fn_score $radius $radius $crop $path_img $path_out \
+    ./build/main.out $alg $fn_score $radius $radius $crop $level $path_img $path_out \
         > $path_stdout
 
     time=$(cat $path_stdout | egrep -o '[0-9]+ ms' | sed -E 's/([0-9]+) ms/\1/')
@@ -29,11 +29,11 @@ function run() {
 function run_all() {
     for fn_score in sos ncc zncc; do
         for tif_file in data/*.tif; do
-            run multi $fn_score 8 300 $tif_file 
+            level=4 run multi $fn_score 8 300 $tif_file 
         done
 
         for jpg_file in data/*.jpg; do
-            run multi $fn_score 4 40 $jpg_file 
+            level=2 run multi $fn_score 8 10 $jpg_file 
         done
     done
 
@@ -44,12 +44,12 @@ function run_all() {
         done
 
         for jpg_file in data/*.jpg; do
-            run single $fn_score 64 40 $jpg_file 
+            run single $fn_score 64 10 $jpg_file 
         done
+        true
     done
 
 }
 
-OMP_NUM_THREADS=8
-run_all
+OMP_NUM_THREADS=8 run_all
 
