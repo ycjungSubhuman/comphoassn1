@@ -20,6 +20,8 @@ cmake ../ && make
 
 ## Usage
 
+Create and put all images in `data/`. Create `examples/`. Launch `run.sh` for alignment. Launch `tile.sh` for generating image tiles. Launch `time.sh` for reporting average time.
+
 Run `build/main.out --help` for usage
 
 See `run.bash` for execution example
