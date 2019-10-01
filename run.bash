@@ -28,26 +28,26 @@ function run() {
 
 function run_all() {
     for fn_score in sos ncc zncc; do
-        for tif_file in data/*.tif; do
-            level=4 run multi $fn_score 8 300 $tif_file 
-        done
+#         for tif_file in data/*.tif; do
+#             level=4 run multi $fn_score 8 300 $tif_file 
+#         done
 
-        for jpg_file in data/*.jpg; do
-            level=2 run multi $fn_score 8 10 $jpg_file 
-        done
+#         for jpg_file in data/*.jpg; do
+#             level=2 run multi $fn_score 8 10 $jpg_file 
+#         done
+    true
     done
 
 
-    for fn_score in sos ncc zncc; do
-        for tif_file in data/*.tif; do
-            run single $fn_score 128 300 $tif_file 
-        done
-
-        for jpg_file in data/*.jpg; do
-            run single $fn_score 64 10 $jpg_file 
-        done
-        true
-    done
+     for fn_score in sos ncc zncc; do
+#         for tif_file in data/*.tif; do
+#             run single $fn_score 128 300 $tif_file 
+#         done
+# 
+         for jpg_file in data/*.jpg; do
+             run single $fn_score 64 10 $jpg_file 
+         done
+     done
 
 }
 
